@@ -17,7 +17,7 @@ coefs_bases = [0, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65,
 sigma_coefs = list(set(np.array([*map(lambda x: [-x, x], coefs_bases)]).flatten()))
 sigma_coefs.sort()
 
-do_show_graphics = True
+do_show_graphics = False
 
 
 def print_task(no):
@@ -209,6 +209,10 @@ def get_L_x(x):
     return a / b
 
 
+def get_credibility_criteria():
+    return get_P_K2() / get_P_K1()
+
+
 def main():
     # P(K1), P(K2)
     print()
@@ -360,6 +364,20 @@ def main():
     print("Відношення правдоподібності L(x) для чотирьох значень ознаки X:")
     for i in range(len(X_arr)):
         print("L(x{}) = {}".format(i + 1, get_L_x(X_arr[i])))
+
+    # П (порогове значення відношення правдоподібності)
+    print()
+    print_task(3.13)
+    print("Порогове значення відношення правдоподібності:")
+    CC = get_credibility_criteria()
+    print("П =", CC)
+    for i in range(len(X_arr)):
+        l_x = get_L_x(X_arr[i])
+        print("X({}) належить класу ".format(i + 1), end='')
+        if CC <= l_x:
+            print("K1")
+        else:
+            print("K2")
 
 
 if __name__ == '__main__':
