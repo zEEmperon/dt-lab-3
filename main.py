@@ -373,8 +373,20 @@ def main():
     print("П =", CC)
     for i in range(len(X_arr)):
         l_x = get_L_x(X_arr[i])
-        print("X({}) належить класу ".format(i + 1), end='')
+        print("X({}) (L = {}) належить класу ".format(i + 1, l_x), end='')
         if CC <= l_x:
+            print("K1")
+        else:
+            print("K2")
+
+    # Класифікація ознак за пороговим значенням
+    print()
+    print_task(3.14)
+    print("Класифікація ознак за пороговим значенням:")
+    print("X пор =", X_threshold)
+    for i in range(len(X_arr)):
+        print("Приймаємо рішення, що X({}) = {} належить до класу ".format(i + 1, X_arr[i]), end='')
+        if X_threshold > X_arr[i]:
             print("K1")
         else:
             print("K2")
