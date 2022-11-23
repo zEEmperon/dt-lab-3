@@ -9,7 +9,7 @@ Mx = 15.
 My = 25.
 sigma_x = 1.
 sigma_y = 0.5
-r = -0.9
+r = 0.3
 Y_threshold = My - sigma_y  # 24.5
 X_arr = range(13, 17)
 
@@ -96,9 +96,9 @@ def get_W_y_given_x(x, y):
     return a * math.exp(-b)
 
 
-def get_W_x_given_y(x, y):
-    a = 1 / (sigma_x * math.sqrt(2 * math.pi * (1 - r ** 2)))
-    b = (1 / (2 * sigma_x ** 2 * (1 - r ** 2))) * (x - Mx - ((sigma_x * (y - My)) / sigma_y)) ** 2
+def get_W_x_given_y(x, y, r_arg=r):
+    a = 1 / (sigma_x * math.sqrt(2 * math.pi * (1 - r_arg ** 2)))
+    b = (1 / (2 * sigma_x ** 2 * (1 - r_arg ** 2))) * (x - Mx - ((sigma_x * (y - My)) / sigma_y)) ** 2
     return a * math.exp(-b)
 
 
@@ -172,17 +172,17 @@ def get_P_dec_K2():
     return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
-def get_M_y_if_is_decision_K1():
+def get_M_y_if_is_decision_K1(r_arg=r):
     x_lower, x_upper = get_X_K1_limits()
     y_lower, y_upper = get_Y_general_limits()
-    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
+    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg, r_arg)
     return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
-def get_M_y_if_is_decision_K2():
+def get_M_y_if_is_decision_K2(r_arg=r):
     x_lower, x_upper = get_X_K2_limits()
     y_lower, y_upper = get_Y_general_limits()
-    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
+    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg, r_arg)
     return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
@@ -418,6 +418,8 @@ def main():
             print("K1")
         else:
             print("K2")
+
+    #
 
 
 if __name__ == '__main__':
