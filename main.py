@@ -209,6 +209,34 @@ def get_L_x(x):
     return a / b
 
 
+def get_P_K1_dec_K2():
+    x_lower, x_upper = get_X_K2_limits()
+    y_lower, y_upper = get_Y_K1_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
+def get_P_K2_dec_K1():
+    x_lower, x_upper = get_X_K1_limits()
+    y_lower, y_upper = get_Y_K2_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
+def get_P_K1_dec_K1():
+    x_lower, x_upper = get_X_K1_limits()
+    y_lower, y_upper = get_Y_K1_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
+def get_P_K2_dec_K2():
+    x_lower, x_upper = get_X_K2_limits()
+    y_lower, y_upper = get_Y_K2_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
 def get_credibility_criteria():
     return get_P_K2() / get_P_K1()
 
