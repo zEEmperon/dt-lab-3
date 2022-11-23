@@ -16,6 +16,10 @@ sigma_coefs = list(set(np.array([*map(lambda x: [-x, x], [0, 1, 2, 3, 4, 5, 10, 
 sigma_coefs.sort()
 
 
+def print_task(no):
+    print("Завдання {}:".format(no))
+
+
 def get_X_general_limits():
     x_lower = Mx - 3 * sigma_x
     x_upper = Mx + 3 * sigma_x
@@ -193,12 +197,14 @@ def get_W_y_given_decision_K2(y):
 def main():
     # P(K1), P(K2)
     print()
+    print_task(3.3)
     print("Апріорні ймовірності приналежності екземпляра виробу до класу К1 або К2:")
     print("P(K1) =", get_P_K1())
     print("P(K2) =", get_P_K2())
 
     # M[x/K1], M[x/K2]
     print()
+    print_task(3.4)
     print("Математичне сподівання ознаки за умови, що примірник належить до класу К1 або К2:")
     print("M[x/K1] =", get_M_x_if_class_is_K1())
     print("M[x/K2] =", get_M_x_if_class_is_K2())
@@ -213,6 +219,7 @@ def main():
     table_data = np.vstack((x_labels, x_arr, w_x_arr)).T
 
     print()
+    print_task(3.5)
     print(label)
     print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
 
@@ -242,6 +249,7 @@ def main():
     table_data = np.vstack((x_labels, x_K_arr, w_x_K_arr)).T
 
     print()
+    print_task(3.6)
     print(label)
     print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
 
@@ -256,16 +264,19 @@ def main():
     # X_threshold
     X_threshold = get_X_threshold()
     print()
+    print_task(3.7)
     print("Порогове значення X:", X_threshold)
 
     # P(dec K1), P(dec K2)
     print()
+    print_task(3.8)
     print("Апріорні ймовірності ухвалення рішення про віднесення екземплярів до класів К1 і К2:")
     print("P(ріш К1) =", get_P_dec_K1())
     print("P(ріш К2) =", get_P_dec_K2())
 
     # M[y/ріш K1], M[y/ріш K2]
     print()
+    print_task(3.9)
     print("Умовне математичне сподівання прог. параметра при умовах віднесення примірника до класу К1 або К2:")
     print("M[y/ріш K1] =", get_M_y_if_is_decision_K1())
     print("M[y/ріш K2] =", get_M_y_if_is_decision_K2())
@@ -281,6 +292,7 @@ def main():
     table_data = np.vstack((y_labels, y_arr, w_y_arr)).T
 
     print()
+    print_task(3.10)
     print(label)
     print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
 
@@ -311,6 +323,7 @@ def main():
     table_data = np.vstack((y_labels, y_K_arr, w_y_decision_K_arr)).T
 
     print()
+    print_task(3.11)
     print(label)
     print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
 
