@@ -164,18 +164,30 @@ def get_P_dec_K2():
     return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
-def get_M_y_if_class_is_K1():
+def get_M_y_if_is_decision_K1():
     x_lower, x_upper = get_X_K1_limits()
     y_lower, y_upper = get_Y_general_limits()
     fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
     return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
-def get_M_y_if_class_is_K2():
+def get_M_y_if_is_decision_K2():
     x_lower, x_upper = get_X_K2_limits()
     y_lower, y_upper = get_Y_general_limits()
     fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
     return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
+def get_W_y_given_decision_K1(y):
+    x_lower, x_upper = get_X_K1_limits()
+    fun = lambda x: get_W_x_given_y(x, y)
+    return integrate.quad(fun, x_lower, x_upper)[0]
+
+
+def get_W_y_given_decision_K2(y):
+    x_lower, x_upper = get_X_K2_limits()
+    fun = lambda x: get_W_x_given_y(x, y)
+    return integrate.quad(fun, x_lower, x_upper)[0]
 
 
 def main():
@@ -252,11 +264,11 @@ def main():
     print("P(ріш К1) =", get_P_dec_K1())
     print("P(ріш К2) =", get_P_dec_K2())
 
-    # M[y/K1], M[y/K2]
+    # M[y/ріш K1], M[y/ріш K2]
     print()
     print("Умовне математичне сподівання прог. параметра при умовах віднесення примірника до класу К1 або К2:")
-    print("M[y/K1] =", get_M_y_if_class_is_K1())
-    print("M[y/K2] =", get_M_y_if_class_is_K2())
+    print("M[y/ріш K1] =", get_M_y_if_is_decision_K1())
+    print("M[y/ріш K2] =", get_M_y_if_is_decision_K2())
 
     # W(y)
     label = "Значення безумовної густини прогнозованого параметра W(y)"
@@ -275,6 +287,38 @@ def main():
     plt.plot(y_arr, w_y_arr)
     plt.xlabel("y")
     plt.ylabel("W(y)")
+    plt.title(label)
+    plt.show()
+
+    # W(y|ріш К1), W(y|ріш К2)
+    label = "Умовні розподіли прогнозованого параметра за умови, якщо приймається рішення про віднесення до класу К1 " \
+            "або К2 "
+
+    y_K1_arr = [*map(lambda coef: get_M_y_if_is_decision_K1() + coef * sigma_y, sigma_coefs)]
+    w_y_decision_K1_arr = [*map(lambda y: get_W_y_given_decision_K1(y), y_K1_arr)]
+
+    y_K2_arr = [*map(lambda coef: get_M_y_if_is_decision_K2() + coef * sigma_y, sigma_coefs)]
+    w_y_decision_K2_arr = [*map(lambda y: get_W_y_given_decision_K2(y), y_K2_arr)]
+
+    y_labels_K1 = get_sigma_coef_labels("M[y|ріш K1]", "sigma_y")
+    y_labels_K2 = get_sigma_coef_labels("M[y|ріш K2]", "sigma_y")
+
+    y_K_arr = [*y_K1_arr, *y_K2_arr]
+    w_y_decision_K_arr = [*w_y_decision_K1_arr, *w_y_decision_K2_arr]
+    y_labels = [*y_labels_K1, *y_labels_K2]
+
+    col_names = ["Вираз y", "Значення y", "W(y|ріш K)"]
+    table_data = np.vstack((y_labels, y_K_arr, w_y_decision_K_arr)).T
+
+    print()
+    print(label)
+    print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
+
+    plt.plot(y_K1_arr, w_y_decision_K1_arr, label="W(y|ріш K1)")
+    plt.plot(y_K2_arr, w_y_decision_K2_arr, label="W(y|ріш K2)")
+    plt.xlabel("y")
+    plt.ylabel("W(y| ріш K)")
+    plt.legend()
     plt.title(label)
     plt.show()
 
