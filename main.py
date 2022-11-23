@@ -158,14 +158,14 @@ def get_P_dec_K2():
     return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
-def get_M_Y_if_class_is_K1():
+def get_M_y_if_class_is_K1():
     x_lower, x_upper = get_X_K1_limits()
     y_lower, y_upper = get_Y_general_limits()
     fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
     return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
-def get_M_Y_if_class_is_K2():
+def get_M_y_if_class_is_K2():
     x_lower, x_upper = get_X_K2_limits()
     y_lower, y_upper = get_Y_general_limits()
     fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
@@ -173,6 +173,18 @@ def get_M_Y_if_class_is_K2():
 
 
 def main():
+    # P(K1), P(K2)
+    print()
+    print("Апріорні ймовірності приналежності екземпляра виробу до класу К1 або К2:")
+    print("P(K1) =", get_P_K1())
+    print("P(K2) =", get_P_K2())
+
+    # M[x/K1], M[x/K2]
+    print()
+    print("Математичне сподівання ознаки за умови, що примірник належить до класу К1 або К2:")
+    print("M[x/K1] =", get_M_x_if_class_is_K1())
+    print("M[x/K2] =", get_M_x_if_class_is_K2())
+
     # W(x)
     label = "Безумовна густина розподілу ознаки х"
     x_arr = [*map(lambda coef: Mx + coef * sigma_x, sigma_coefs)]
@@ -237,8 +249,8 @@ def main():
     # M[y/K1], M[y/K2]
     print()
     print("Умовне математичне сподівання прог. параметра при умовах віднесення примірника до класу К1 або К2:")
-    print("M[y/K1] =", get_M_Y_if_class_is_K1())
-    print("M[y/K2] =", get_M_Y_if_class_is_K2())
+    print("M[y/K1] =", get_M_y_if_class_is_K1())
+    print("M[y/K2] =", get_M_y_if_class_is_K2())
 
 
 if __name__ == '__main__':
