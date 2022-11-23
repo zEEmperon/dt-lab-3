@@ -442,6 +442,13 @@ def main():
         plt.title(label)
         plt.show()
 
+    # Демонстрація областей рішень
+    plt.plot([X_threshold, X_threshold], [0, 2 * Y_threshold], label="Х пор = {}".format(X_threshold))
+    plt.plot([0, 2 * X_threshold], [Y_threshold, Y_threshold], label="Y пор = {}".format(Y_threshold))
+    plt.legend()
+    plt.title("Демонстрація областей рішень")
+    plt.show()
+
 
 if __name__ == '__main__':
     main()
