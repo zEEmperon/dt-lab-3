@@ -12,16 +12,56 @@ sigma_y = 0.5
 r = -0.9
 Y_threshold = My - sigma_y  # 24.5
 
-y_lower_K1 = My - 3 * sigma_y  # 23.5
-y_upper_K1 = Y_threshold
-y_lower_K2 = Y_threshold
-y_upper_K2 = My + 3 * sigma_y  # * Y_threshold  # I think it is unneeded  # 26.5
-
-x_lower = Mx - 3 * sigma_x  # 12
-x_upper = Mx + 3 * sigma_x  # 18
-
-sigma_coefs = list(set(np.array([*map(lambda x: [-x, x], [0, 1, 2, 3, 4, 5, 10, 15, 20, 25])]).flatten()))
+sigma_coefs = list(set(np.array([*map(lambda x: [-x, x], [0, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30])]).flatten()))
 sigma_coefs.sort()
+
+
+def get_X_general_limits():
+    x_lower = Mx - 3 * sigma_x
+    x_upper = Mx + 3 * sigma_x
+    return x_lower, x_upper
+
+
+def get_Y_general_limits():
+    y_lower = My - 3 * sigma_y
+    y_upper = My + 3 * sigma_y
+    return y_lower, y_upper
+
+
+def get_X_K1_limits():
+    x_lower = 0  # by methods the Mx - 3 * sigma_x should be here
+    x_upper = get_X_threshold()
+    return x_lower, x_upper
+
+
+def get_X_K2_limits():
+    x_lower = get_X_threshold()
+    x_upper = Mx + 3 * sigma_x
+    return x_lower, x_upper
+
+
+def get_Y_K1_limits():
+    y_lower = My - 3 * sigma_y
+    y_upper = Y_threshold
+    return y_lower, y_upper
+
+
+def get_Y_K2_limits():
+    y_lower = Y_threshold
+    y_upper = My + 3 * sigma_y  # * Y_threshold  # I think it is unneeded
+    return y_lower, y_upper
+
+
+def get_K1_limits():
+    x_lower, x_upper = get_X_general_limits()
+    y_lower, y_upper = get_Y_K1_limits()
+    return x_lower, x_upper, y_lower, y_upper
+
+
+def get_K2_limits():
+    x_lower, x_upper = get_X_general_limits()
+    y_lower, y_upper = get_Y_K2_limits()
+    return x_lower, x_upper, y_lower, y_upper
 
 
 def get_sigma_coef_labels(first_expr, second_expr):
@@ -37,8 +77,8 @@ def get_sigma_coef_labels(first_expr, second_expr):
 def get_W_x_y(x, y):
     a = 1 / (2 * math.pi * sigma_x * sigma_y * math.sqrt(1 - r ** 2))
     b = (1 / (2 * (1 - r ** 2))) * (
-            ((x - Mx) / sigma_x) ** 2 - (2 * r * ((x - Mx) / sigma_x) * ((y - My) / sigma_y)) + (
-            ((y - My) / sigma_y) ** 2))
+            ((x - Mx) / sigma_x) ** 2 - (2 * r * ((x - Mx) / sigma_x) * ((y - My) / sigma_y)) +
+            (((y - My) / sigma_y) ** 2))
     return a * math.exp(-b)
 
 
@@ -55,40 +95,61 @@ def get_W_x(x):
 
 
 def get_P_K1():
-    return integrate.nquad(get_W_x_y, [[x_lower, x_upper], [y_lower_K1, y_upper_K1]])[0]
+    x_lower, x_upper, y_lower, y_upper = get_K1_limits()
+    return integrate.nquad(get_W_x_y, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
 def get_P_K2():
-    return integrate.nquad(get_W_x_y, [[x_lower, x_upper], [y_lower_K2, y_upper_K2]])[0]
+    x_lower, x_upper, y_lower, y_upper = get_K2_limits()
+    return integrate.nquad(get_W_x_y, [[x_lower, x_upper], [y_lower, y_upper]])[0]
 
 
 def get_M_x_if_class_is_K1():
+    x_lower, x_upper, y_lower, y_upper = get_K1_limits()
     fun = lambda y_arg, x_arg: x_arg * get_W_y_given_x(x_arg, y_arg)
     # return (1 / get_P_K1()) * integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
-    return integrate.nquad(fun, [[y_lower_K1, y_upper_K1], [x_lower, x_upper]])[0]
+    return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
 def get_M_x_if_class_is_K2():
+    x_lower, x_upper, y_lower, y_upper = get_K2_limits()
     fun = lambda y_arg, x_arg: x_arg * get_W_y_given_x(x_arg, y_arg)
     # return (1 / get_P_K2()) * integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
-    return integrate.nquad(fun, [[y_lower_K2, y_upper_K2], [x_lower, x_upper]])[0]
+    return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
 def get_W_x_if_class_is_K1(x):
+    x_lower, x_upper, y_lower, y_upper = get_K1_limits()
     fun = lambda y: get_W_y_given_x(x, y)
-    return (1 / get_P_K1()) * integrate.quad(fun, y_lower_K1, y_upper_K1)[0]
+    return (1 / get_P_K1()) * integrate.quad(fun, y_lower, y_upper)[0]
     # return integrate.quad(fun, y_lower, y_upper)[0]
 
 
 def get_W_x_if_class_is_K2(x):
+    x_lower, x_upper, y_lower, y_upper = get_K2_limits()
     fun = lambda y: get_W_y_given_x(x, y)
-    return (1 / get_P_K2()) * integrate.quad(fun, y_lower_K2, y_upper_K2)[0]
+    return (1 / get_P_K2()) * integrate.quad(fun, y_lower, y_upper)[0]
     # return integrate.quad(fun, y_lower, y_upper)[0]
 
 
 def get_X_threshold():
-    fun = lambda x: get_W_y_given_x(x, Y_threshold)
+    x_lower, x_upper = get_X_general_limits()
+    fun = lambda x: get_W_x_y(x, Y_threshold)
     return integrate.quad(fun, x_lower, x_upper)[0]
+
+
+def get_P_dec_K1():
+    y_lower, y_upper = get_Y_general_limits()
+    x_lower, x_upper = get_X_K1_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
+
+
+def get_P_dec_K2():
+    y_lower, y_upper = get_Y_general_limits()
+    x_lower, x_upper = get_X_K2_limits()
+    fun = lambda y, x: get_W_x_y(x, y)
+    return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
 def main():
@@ -146,6 +207,12 @@ def main():
     X_threshold = get_X_threshold()
     print()
     print("Порогове значення X:", X_threshold)
+
+    # P(dec K1), P(dec K2)
+    print()
+    print("Апріорні ймовірності ухвалення рішення про віднесення екземплярів до класів К1 і К2:")
+    print("P(ріш К1) =", get_P_dec_K1())
+    print("P(ріш К2) =", get_P_dec_K2())
 
 
 if __name__ == '__main__':
