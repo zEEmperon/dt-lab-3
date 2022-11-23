@@ -88,6 +88,12 @@ def get_W_y_given_x(x, y):
     return a * math.exp(-b)
 
 
+def get_W_x_given_y(x, y):
+    a = 1 / (sigma_x * math.sqrt(2 * math.pi * (1 - r ** 2)))
+    b = (1 / (2 * sigma_x ** 2 * (1 - r ** 2))) * (x - Mx * ((sigma_x * (y - My)) / sigma_y)) ** 2
+    return a * math.exp(-b)
+
+
 def get_W_x(x):
     a = (1 / sigma_x * math.sqrt(2 * math.pi))
     b = (x - Mx) ** 2 / (2 * sigma_x ** 2)
@@ -152,6 +158,20 @@ def get_P_dec_K2():
     return integrate.nquad(fun, [[y_lower, y_upper], [x_lower, x_upper]])[0]
 
 
+def get_M_Y_if_class_is_K1():
+    x_lower, x_upper = get_X_K1_limits()
+    y_lower, y_upper = get_Y_general_limits()
+    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
+def get_M_Y_if_class_is_K2():
+    x_lower, x_upper = get_X_K2_limits()
+    y_lower, y_upper = get_Y_general_limits()
+    fun = lambda x_arg, y_arg: y_arg * get_W_x_given_y(x_arg, y_arg)
+    return integrate.nquad(fun, [[x_lower, x_upper], [y_lower, y_upper]])[0]
+
+
 def main():
     # W(x)
     label = "Безумовна густина розподілу ознаки х"
@@ -213,6 +233,12 @@ def main():
     print("Апріорні ймовірності ухвалення рішення про віднесення екземплярів до класів К1 і К2:")
     print("P(ріш К1) =", get_P_dec_K1())
     print("P(ріш К2) =", get_P_dec_K2())
+
+    # M[y/K1], M[y/K2]
+    print()
+    print("Умовне математичне сподівання прог. параметра при умовах віднесення примірника до класу К1 або К2:")
+    print("M[y/K1] =", get_M_Y_if_class_is_K1())
+    print("M[y/K2] =", get_M_Y_if_class_is_K2())
 
 
 if __name__ == '__main__':
