@@ -419,7 +419,28 @@ def main():
         else:
             print("K2")
 
-    #
+    # M[y/ріш К1] - M[y/ріш К2]
+    label = "Значення модуля різниці умовних математичних сподівань (M[y/ріш К1] - M[y/ріш К2])"
+
+    r_coefs = [1, 0.8, 0.6, 0.4, 0.2, 0.1]
+    r_args = [*map(lambda coef: r * coef, r_coefs)]
+    r_labels = [*map(lambda coef: "{}r".format(coef) if r != 1 else "r", r_coefs)]
+    results = [*map(lambda r_arg: abs(get_M_y_if_is_decision_K1(r_arg) - get_M_y_if_is_decision_K2(r_arg)), r_args)]
+
+    col_names = ["Тіснота зв'язку (r)", "Значення r", "M[y/ріш К1] - M[y/ріш К2]"]
+    table_data = np.vstack((r_labels, r_args, results)).T
+
+    print()
+    print_task(3.15)
+    print(label)
+    print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
+
+    if do_show_graphics:
+        plt.plot(r_args, results)
+        plt.xlabel("r")
+        plt.ylabel("M[y/ріш К1] - M[y/ріш К2]")
+        plt.title(label)
+        plt.show()
 
 
 if __name__ == '__main__':
