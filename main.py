@@ -11,6 +11,7 @@ sigma_x = 1.
 sigma_y = 0.5
 r = -0.9
 Y_threshold = My - sigma_y  # 24.5
+X_arr = range(13, 17)
 
 sigma_coefs = list(set(np.array([*map(lambda x: [-x, x], [0, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30])]).flatten()))
 sigma_coefs.sort()
@@ -292,7 +293,7 @@ def main():
     table_data = np.vstack((y_labels, y_arr, w_y_arr)).T
 
     print()
-    print_task(3.10)
+    print_task("3.10")
     print(label)
     print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
 
@@ -334,6 +335,9 @@ def main():
     plt.legend()
     plt.title(label)
     plt.show()
+
+    # Відношення правдоподібності для 4-х значень ознаки x
+
 
 
 if __name__ == '__main__':
