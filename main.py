@@ -86,6 +86,11 @@ def get_W_x_if_class_is_K2(x):
     # return integrate.quad(fun, y_lower, y_upper)[0]
 
 
+def get_X_threshold():
+    fun = lambda x: get_W_y_given_x(x, Y_threshold)
+    return integrate.quad(fun, x_lower, x_upper)[0]
+
+
 def main():
     # W(x)
     label = "Безумовна густина розподілу ознаки х"
@@ -136,6 +141,11 @@ def main():
     plt.legend()
     plt.title(label)
     plt.show()
+
+    # X_threshold
+    X_threshold = get_X_threshold()
+    print()
+    print("Порогове значення X:", X_threshold)
 
 
 if __name__ == '__main__':
