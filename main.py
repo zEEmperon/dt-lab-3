@@ -100,6 +100,12 @@ def get_W_x(x):
     return a * math.exp(-b)
 
 
+def get_W_y(y):
+    a = (1 / sigma_y * math.sqrt(2 * math.pi))
+    b = (y - My) ** 2 / (2 * sigma_y ** 2)
+    return a * math.exp(-b)
+
+
 def get_P_K1():
     x_lower, x_upper, y_lower, y_upper = get_K1_limits()
     return integrate.nquad(get_W_x_y, [[x_lower, x_upper], [y_lower, y_upper]])[0]
@@ -251,6 +257,26 @@ def main():
     print("Умовне математичне сподівання прог. параметра при умовах віднесення примірника до класу К1 або К2:")
     print("M[y/K1] =", get_M_y_if_class_is_K1())
     print("M[y/K2] =", get_M_y_if_class_is_K2())
+
+    # W(y)
+    label = "Значення безумовної густини прогнозованого параметра W(y)"
+    y_arr = [*map(lambda coef: My + coef * 0.2, sigma_coefs)]
+    w_y_arr = [*map(lambda y: get_W_y(y), y_arr)]
+
+    y_labels = get_sigma_coef_labels("My", "sigma_y")
+
+    col_names = ["Вираз y", "Значення y", "W(y)"]
+    table_data = np.vstack((y_labels, y_arr, w_y_arr)).T
+
+    print()
+    print(label)
+    print(tabulate(table_data, headers=col_names, tablefmt="fancy_grid"))
+
+    plt.plot(y_arr, w_y_arr)
+    plt.xlabel("y")
+    plt.ylabel("W(y)")
+    plt.title(label)
+    plt.show()
 
 
 if __name__ == '__main__':
