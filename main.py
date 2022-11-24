@@ -449,8 +449,19 @@ def main():
     plt.title("Демонстрація областей рішень")
     plt.show()
 
+    # Ймовірності рішень і класів
+    print()
+    print_task("3.16 - 3.19")
+    print("Ймовірності рішень і класів:")
+    print("P(K1) =", get_P_K1())
+    print("P(K2) =", get_P_K2())
+    print("P(ріш К1) =", get_P_dec_K1())
+    print("P(ріш К2) =", get_P_dec_K2())
+    print("P(K1/ріш К2) =", get_P_K1_dec_K2())
+    print("P(K2/ріш К1) =", get_P_K2_dec_K1())
+    print("P(K1/ріш К1) =", get_P_K1_dec_K1())
+    print("P(K2/ріш К2) =", get_P_K2_dec_K2())
+
 
 if __name__ == '__main__':
     main()
-
-# https://stud.com.ua/151074/ekonomika/dvovimirniy_mirniy_normalniy_zakon_rozpodilu
